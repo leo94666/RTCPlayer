@@ -36,6 +36,7 @@ class PusherDemoActivity : AppCompatActivity() {
         val rtcSurfaceView = findViewById<RTCSurfaceView>(R.id.surface_view_render)
 
         pusher.bind(rtcSurfaceView, true)
+        setTitle("Pusher Demo")
 
 
         pusher.setOnErrorListener { code, msg ->

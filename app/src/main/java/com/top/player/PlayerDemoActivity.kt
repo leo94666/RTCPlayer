@@ -30,6 +30,7 @@ class PlayerDemoActivity : AppCompatActivity() {
         //ffmpeg -re -stream_loop -1 -i "D:\li\hot\data\data\baseline.mp4" -vcodec h264 -acodec aac -f rtsp -rtsp_transport tcp -bf 0 rtsp://zlmediakit.com/live/li
         //ffmpeg -re -stream_loop -1 -i "D:\li\hot\data\data\test.mp4" -vcodec h264 -acodec aac -f flv -bf 0 rtmp://zlmediakit.com/live/li
 
+        setTitle("Player Demo")
         player.bind(binding.surfaceViewRender)
 
         player.setOnErrorListener { code, msg ->
@@ -106,6 +107,6 @@ class PlayerDemoActivity : AppCompatActivity() {
     }
 
     fun onVolume(view: View) {
-        player.setVolume(0.6f)
+        player.setVolume(0.0f)
     }
 }
