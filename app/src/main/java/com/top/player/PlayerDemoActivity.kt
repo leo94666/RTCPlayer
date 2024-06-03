@@ -65,8 +65,6 @@ class PlayerDemoActivity : AppCompatActivity() {
 
                 else -> {}
             }
-
-
         }
 
     }

@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.permissionx.guolindev.PermissionX
+import com.rtc.core.RTCSurfaceView
 import com.rtc.core.ZLMRTCPusher
 import com.rtc.core.push.PushMode
 import com.rtc.core.push.ZLMRTCPusherImpl
@@ -32,7 +33,10 @@ class PusherDemoActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_pusher)
 
-        pusher.bind(binding.surfaceViewRender, true)
+        val rtcSurfaceView = findViewById<RTCSurfaceView>(R.id.surface_view_render)
+
+        pusher.bind(rtcSurfaceView, true)
+
 
         pusher.setOnErrorListener { code, msg ->
             Toast.makeText(this, "code:${code},msg:${msg}",    Toast.LENGTH_SHORT).show()

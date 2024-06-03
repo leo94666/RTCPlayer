@@ -21,13 +21,16 @@ import android.hardware.camera2.params.StreamConfigurationMap;
 import android.os.Build;
 import android.os.SystemClock;
 import android.util.Range;
+
 import androidx.annotation.Nullable;
+
+import org.webrtc.CameraEnumerationAndroid.CaptureFormat;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.webrtc.CameraEnumerationAndroid.CaptureFormat;
 
 public class Camera2Enumerator implements CameraEnumerator {
   private final static String TAG = "Camera2Enumerator";

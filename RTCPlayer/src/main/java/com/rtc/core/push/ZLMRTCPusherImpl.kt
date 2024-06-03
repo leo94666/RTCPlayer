@@ -11,18 +11,20 @@ import android.util.Log
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import com.rtc.core.NativeLib
 import com.rtc.core.RTCSurfaceView
-import com.rtc.core.ZLMRTCPusher
 import com.rtc.core.base.ActivityLauncher
+import com.rtc.core.NativeLib
+import com.rtc.core.ZLMRTCPusher
 import com.rtc.core.base.Error
 import com.rtc.core.base.runMain
 import com.rtc.core.client.HttpClient
 import com.rtc.core.client.PeerConnectionClient
+import com.rtc.core.play.Status
 import org.json.JSONObject
 import org.webrtc.Camera1Enumerator
 import org.webrtc.Camera2Enumerator
 import org.webrtc.CameraEnumerator
+import org.webrtc.CameraVideoCapturer
 import org.webrtc.EglBase
 import org.webrtc.FileVideoCapturer
 import org.webrtc.IceCandidate
@@ -36,7 +38,8 @@ import java.math.BigInteger
 import kotlin.random.Random
 
 class ZLMRTCPusherImpl(val context: FragmentActivity) : ZLMRTCPusher(),
-    PeerConnectionClient.PeerConnectionEvents {
+    PeerConnectionClient.PeerConnectionEvents, CameraVideoCapturer.CameraEventsHandler,
+    RendererCommon.RendererEvents {
 
 
     private var peerConnectionClient: PeerConnectionClient? = null
@@ -47,14 +50,13 @@ class ZLMRTCPusherImpl(val context: FragmentActivity) : ZLMRTCPusher(),
 
     private var localHandleId = BigInteger.valueOf(Random(2048).nextLong())
 
-    private var ScreenShareServiceIntent: Intent? = null
-
-
     private var app: String = ""
     private var streamId: String = ""
 
     private var screenWidth = 1280
     private var screenHeight = 720
+
+    private var ScreenShareServiceIntent: Intent? = null
 
     private var listener: ((Int, String) -> Unit)? = null
 
@@ -63,7 +65,6 @@ class ZLMRTCPusherImpl(val context: FragmentActivity) : ZLMRTCPusher(),
     }
 
     private fun initPeerConnectionClient(): PeerConnectionClient {
-        localHandleId = BigInteger.valueOf(Random(2048).nextLong())
         eglBase = EglBase.create()
         return PeerConnectionClient(
             context, eglBase,
@@ -103,17 +104,6 @@ class ZLMRTCPusherImpl(val context: FragmentActivity) : ZLMRTCPusher(),
     }
 
 
-    private fun createScreenCapture(context: Context?): VideoCapturer? {
-        val videoCapturer: VideoCapturer? = if (Camera2Enumerator.isSupported(context)) {
-            createCameraCapture(Camera2Enumerator(context))
-        } else {
-            createCameraCapture(Camera1Enumerator(true))
-        }
-
-        return videoCapturer
-    }
-
-
     /**
      * 创建相机媒体流
      */
@@ -123,7 +113,7 @@ class ZLMRTCPusherImpl(val context: FragmentActivity) : ZLMRTCPusher(),
         // Front facing camera not found, try something else
         for (deviceName in deviceNames) {
             if (enumerator.isFrontFacing(deviceName)) {
-                val videoCapturer: VideoCapturer? = enumerator.createCapturer(deviceName, null)
+                val videoCapturer: VideoCapturer? = enumerator.createCapturer(deviceName, this)
                 if (videoCapturer != null) {
                     return videoCapturer
                 }
@@ -132,7 +122,7 @@ class ZLMRTCPusherImpl(val context: FragmentActivity) : ZLMRTCPusher(),
         // First, try to find front facing camera
         for (deviceName in deviceNames) {
             if (enumerator.isFrontFacing(deviceName)) {
-                val videoCapturer: VideoCapturer? = enumerator.createCapturer(deviceName, null)
+                val videoCapturer: VideoCapturer? = enumerator.createCapturer(deviceName, this)
                 if (videoCapturer != null) {
                     return videoCapturer
                 }
@@ -197,22 +187,9 @@ class ZLMRTCPusherImpl(val context: FragmentActivity) : ZLMRTCPusher(),
         } else {
             return
         }
-        RTCSurfaceViewRenderer?.init(eglBase?.eglBaseContext, object : RendererCommon.RendererEvents {
-            override fun onFirstFrameRendered() {
-                //Toast.makeText(context, "onFirstFrameRendered", Toast.LENGTH_SHORT).show()
-                logger("====================================onFirstFrameRendered")
-            }
-
-            override fun onFrameResolutionChanged(
-                videoWidth: Int,
-                videoHeight: Int,
-                rotation: Int
-            ) {
-
-            }
-        })
-        //rtcSurfaceViewRenderer?.setEnableHardwareScaler(true)
-        //rtcSurfaceViewRenderer?.setEnableHardwareScaler(true)
+        RTCSurfaceViewRenderer?.init(eglBase?.eglBaseContext, this)
+        RTCSurfaceViewRenderer?.setEnableHardwareScaler(true)
+        RTCSurfaceViewRenderer?.setEnableHardwareScaler(true)
         //surfaceViewRenderer?.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_BALANCED)
         peerConnectionClient?.setAudioEnabled(true)
         peerConnectionClient?.setVideoEnabled(true)
@@ -232,23 +209,23 @@ class ZLMRTCPusherImpl(val context: FragmentActivity) : ZLMRTCPusher(),
                 mediaProjectionManager.createScreenCaptureIntent()
             ) { resultCode, data ->
                 if (resultCode == Activity.RESULT_OK) {
+
                     ScreenShareServiceIntent = Intent(context, ScreenShareService::class.java)
+
                     ScreenShareServiceIntent?.let {
                         ContextCompat.startForegroundService(
                             context,
                             it
                         )
-                        val screenCapturerAndroid =
-                            ScreenCapturerAndroid(data, object : MediaProjection.Callback() {
-
-                            })
-                        peerConnectionClient?.createPeerConnection(
-                            screenCapturerAndroid,
-                            localHandleId
-                        )
-                        peerConnectionClient?.createOffer(localHandleId)
                     }
 
+
+                    val screenCapturerAndroid =
+                        ScreenCapturerAndroid(data, object : MediaProjection.Callback() {
+
+                        })
+                    peerConnectionClient?.createPeerConnection(screenCapturerAndroid, localHandleId)
+                    peerConnectionClient?.createOffer(localHandleId)
                 }
             }
 
@@ -293,17 +270,9 @@ class ZLMRTCPusherImpl(val context: FragmentActivity) : ZLMRTCPusher(),
                 logger("handleId: $msg")
                 peerConnectionClient?.setAudioEnabled(false)
                 peerConnectionClient?.setVideoEnabled(false)
-
                 runMain {
-                    listener?.invoke(
-                        code,
-                        msg
-                    )
-                   stop()
+                    listener?.invoke(code, msg)
                 }
-//                ScreenShareServiceIntent?.let {
-//                    context.stopService(it)
-//                }
             }
         } catch (e: Exception) {
             runMain {
@@ -311,11 +280,7 @@ class ZLMRTCPusherImpl(val context: FragmentActivity) : ZLMRTCPusher(),
                     Error.ERROR_CODE_PARSE_FAILED.code,
                     Error.ERROR_CODE_PARSE_FAILED.message
                 )
-               stop()
             }
-//            ScreenShareServiceIntent?.let {
-//                context.stopService(it)
-//            }
         }
 
     }
@@ -360,6 +325,41 @@ class ZLMRTCPusherImpl(val context: FragmentActivity) : ZLMRTCPusher(),
     }
 
     override fun onRemoteRender(handleId: BigInteger?) {
+
+    }
+
+    //////////////////////////
+    override fun onCameraError(errorDescription: String?) {
+        logger("onCameraError:$errorDescription")
+    }
+
+    override fun onCameraDisconnected() {
+        logger("onCameraDisconnected")
+    }
+
+    override fun onCameraFreezed(errorDescription: String?) {
+        logger("onCameraFreezed:${errorDescription}")
+    }
+
+    override fun onCameraOpening(cameraName: String?) {
+        logger("onCameraOpening:${cameraName}")
+    }
+
+    override fun onFirstFrameAvailable() {
+        logger("onFirstFrameAvailable")
+    }
+
+    override fun onCameraClosed() {
+        logger("onCameraClosed")
+    }
+
+    override fun onFirstFrameRendered() {
+        logger("onFirstFrameRendered")
+
+    }
+
+    override fun onFrameResolutionChanged(videoWidth: Int, videoHeight: Int, rotation: Int) {
+        logger("onFrameResolutionChanged, videoWidth:$videoWidth, videoHeight:$videoHeight, rotation:$rotation")
 
     }
 

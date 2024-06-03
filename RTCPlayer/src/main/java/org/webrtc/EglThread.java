@@ -14,11 +14,14 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
+
 import androidx.annotation.GuardedBy;
 import androidx.annotation.Nullable;
+
+import org.webrtc.EglBase.EglConnection;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.webrtc.EglBase.EglConnection;
 
 /** EGL graphics thread that allows multiple clients to share the same underlying EGLContext. */
 public class EglThread implements RenderSynchronizer.Listener {

@@ -15,8 +15,10 @@ import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES20;
 import android.view.Surface;
+
 import androidx.annotation.GuardedBy;
 import androidx.annotation.Nullable;
+
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.util.ArrayList;

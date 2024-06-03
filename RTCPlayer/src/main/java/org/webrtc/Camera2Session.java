@@ -22,11 +22,14 @@ import android.hardware.camera2.CaptureRequest;
 import android.os.Handler;
 import android.util.Range;
 import android.view.Surface;
+
 import androidx.annotation.Nullable;
+
+import org.webrtc.CameraEnumerationAndroid.CaptureFormat;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import org.webrtc.CameraEnumerationAndroid.CaptureFormat;
 
 class Camera2Session implements CameraSession {
   private static final String TAG = "Camera2Session";

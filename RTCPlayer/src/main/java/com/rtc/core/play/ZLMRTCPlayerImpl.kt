@@ -6,8 +6,8 @@ import android.media.AudioManager
 import android.os.Build
 import android.os.Handler
 import android.util.Log
-import com.rtc.core.NativeLib
 import com.rtc.core.RTCSurfaceView
+import com.rtc.core.NativeLib
 import com.rtc.core.ZLMRTCPlayer
 import com.rtc.core.base.Error
 import com.rtc.core.base.runMain
@@ -17,6 +17,7 @@ import org.json.JSONObject
 import org.webrtc.Camera1Enumerator
 import org.webrtc.Camera2Enumerator
 import org.webrtc.CameraEnumerator
+import org.webrtc.CameraVideoCapturer
 import org.webrtc.EglBase
 import org.webrtc.IceCandidate
 import org.webrtc.PeerConnectionFactory
@@ -29,7 +30,8 @@ import java.math.BigInteger
 import kotlin.random.Random
 
 class ZLMRTCPlayerImpl(val context: Context) : ZLMRTCPlayer(),
-    PeerConnectionClient.PeerConnectionEvents {
+    PeerConnectionClient.PeerConnectionEvents, RendererCommon.RendererEvents,
+    CameraVideoCapturer.CameraEventsHandler {
 
     private var RTCSurfaceViewRenderer: RTCSurfaceView? = null
 
@@ -84,7 +86,7 @@ class ZLMRTCPlayerImpl(val context: Context) : ZLMRTCPlayer(),
         // Front facing camera not found, try something else
         for (deviceName in deviceNames) {
             if (enumerator.isFrontFacing(deviceName)) {
-                val videoCapturer: VideoCapturer? = enumerator.createCapturer(deviceName, null)
+                val videoCapturer: VideoCapturer? = enumerator.createCapturer(deviceName, this)
                 if (videoCapturer != null) {
                     return videoCapturer
                 }
@@ -93,7 +95,7 @@ class ZLMRTCPlayerImpl(val context: Context) : ZLMRTCPlayer(),
         // First, try to find front facing camera
         for (deviceName in deviceNames) {
             if (enumerator.isFrontFacing(deviceName)) {
-                val videoCapturer: VideoCapturer? = enumerator.createCapturer(deviceName, null)
+                val videoCapturer: VideoCapturer? = enumerator.createCapturer(deviceName, this)
                 if (videoCapturer != null) {
                     return videoCapturer
                 }
@@ -150,23 +152,7 @@ class ZLMRTCPlayerImpl(val context: Context) : ZLMRTCPlayer(),
         } else {
             return
         }
-        RTCSurfaceViewRenderer?.init(eglBase?.eglBaseContext, object : RendererCommon.RendererEvents {
-            override fun onFirstFrameRendered() {
-                //Toast.makeText(context, "onFirstFrameRendered", Toast.LENGTH_SHORT).show()
-                logger("====================================onFirstFrameRendered")
-                runMain {
-                    preparedlistener?.invoke(Status.PLAYING)
-                }
-            }
-
-            override fun onFrameResolutionChanged(
-                videoWidth: Int,
-                videoHeight: Int,
-                rotation: Int
-            ) {
-
-            }
-        })
+        RTCSurfaceViewRenderer?.init(eglBase?.eglBaseContext, this)
         peerConnectionClient?.setAudioEnabled(true)
         peerConnectionClient?.createPeerConnectionFactory(PeerConnectionFactory.Options())
         peerConnectionClient?.createPeerConnection(createVideoCapture(context), localHandleId)
@@ -174,7 +160,7 @@ class ZLMRTCPlayerImpl(val context: Context) : ZLMRTCPlayer(),
     }
 
 
-    override fun setVolume(volume:Float){
+    override fun setVolume(volume: Float) {
         audioManager?.isSpeakerphoneOn = true
         val maxVolume = audioManager?.getStreamMaxVolume(AudioManager.STREAM_SYSTEM) ?: 0
         val minVolume = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -188,7 +174,7 @@ class ZLMRTCPlayerImpl(val context: Context) : ZLMRTCPlayer(),
             AudioManager.STREAM_SYSTEM,
             (minVolume + (maxVolume - minVolume) * volume).toInt(),
 //            AudioManager.FLAG_SHOW_UI
-                    AudioManager.FLAG_PLAY_SOUND
+            AudioManager.FLAG_PLAY_SOUND
 
         )
     }
@@ -205,17 +191,22 @@ class ZLMRTCPlayerImpl(val context: Context) : ZLMRTCPlayer(),
     }
 
     override fun pause() {
-        RTCSurfaceViewRenderer?.pauseVideo()
-        runMain {
-            preparedlistener?.invoke(Status.PAUSE)
+        if (peerConnectionClient != null) {
+            RTCSurfaceViewRenderer?.pauseVideo()
+            runMain {
+                preparedlistener?.invoke(Status.PAUSE)
+            }
         }
     }
 
 
     override fun resume() {
-        RTCSurfaceViewRenderer?.setFpsReduction(defaultFps.toFloat())
-        runMain {
-            preparedlistener?.invoke(Status.RESUME)
+        if (peerConnectionClient != null) {
+
+            RTCSurfaceViewRenderer?.setFpsReduction(defaultFps.toFloat())
+            runMain {
+                preparedlistener?.invoke(Status.RESUME)
+            }
         }
     }
 
@@ -227,12 +218,15 @@ class ZLMRTCPlayerImpl(val context: Context) : ZLMRTCPlayer(),
 
     override fun record(duration: Long, result: (path: String) -> Unit) {
 
-        val savePath =
-            context.cacheDir.absoluteFile.absolutePath + File.separator + System.currentTimeMillis() + ".mp4"
-        peerConnectionClient?.setRecordEnable(true, savePath)
-        Handler().postDelayed({
-            peerConnectionClient?.setRecordEnable(false, savePath)
-        }, duration)
+        if (peerConnectionClient != null) {
+            val savePath =
+                context.cacheDir.absoluteFile.absolutePath + File.separator + System.currentTimeMillis() + ".mp4"
+            peerConnectionClient?.setRecordEnable(true, savePath)
+            Handler().postDelayed({
+                peerConnectionClient?.setRecordEnable(false, savePath)
+            }, duration)
+        }
+
     }
 
 
@@ -261,7 +255,6 @@ class ZLMRTCPlayerImpl(val context: Context) : ZLMRTCPlayer(),
                 runMain {
                     listener?.invoke(code, msg)
                     preparedlistener?.invoke(Status.ERROR)
-                    stop()
                 }
 
             }
@@ -272,7 +265,6 @@ class ZLMRTCPlayerImpl(val context: Context) : ZLMRTCPlayer(),
                     Error.ERROR_CODE_PARSE_FAILED.message
                 )
                 preparedlistener?.invoke(Status.ERROR)
-                stop()
             }
 
         }
@@ -328,5 +320,40 @@ class ZLMRTCPlayerImpl(val context: Context) : ZLMRTCPlayer(),
         }
     }
 
+    //////////////////////////
+    override fun onCameraError(errorDescription: String?) {
+        logger("onCameraError:$errorDescription")
+    }
 
+    override fun onCameraDisconnected() {
+        logger("onCameraDisconnected")
+    }
+
+    override fun onCameraFreezed(errorDescription: String?) {
+        logger("onCameraFreezed:${errorDescription}")
+    }
+
+    override fun onCameraOpening(cameraName: String?) {
+        logger("onCameraOpening:${cameraName}")
+    }
+
+    override fun onFirstFrameAvailable() {
+        logger("onFirstFrameAvailable")
+    }
+
+    override fun onCameraClosed() {
+        logger("onCameraClosed")
+    }
+
+    //
+    override fun onFirstFrameRendered() {
+        logger("====================================onFirstFrameRendered")
+        runMain {
+            preparedlistener?.invoke(Status.PLAYING)
+        }
+    }
+
+    override fun onFrameResolutionChanged(videoWidth: Int, videoHeight: Int, rotation: Int) {
+
+    }
 }

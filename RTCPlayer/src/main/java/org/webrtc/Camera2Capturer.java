@@ -12,6 +12,7 @@ package org.webrtc;
 
 import android.content.Context;
 import android.hardware.camera2.CameraManager;
+
 import androidx.annotation.Nullable;
 
 public class Camera2Capturer extends CameraCapturer {

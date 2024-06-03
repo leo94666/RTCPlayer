@@ -16,7 +16,9 @@ import android.graphics.SurfaceTexture;
 import android.opengl.GLException;
 import android.view.Surface;
 import android.view.SurfaceHolder;
+
 import androidx.annotation.Nullable;
+
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;

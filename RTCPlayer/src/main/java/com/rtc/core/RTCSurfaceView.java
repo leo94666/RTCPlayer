@@ -37,7 +37,7 @@ public class RTCSurfaceView extends android.view.SurfaceView
   // Cached resource name.
   private final String resourceName;
   private final RendererCommon.VideoLayoutMeasure videoLayoutMeasure =
-          new RendererCommon.VideoLayoutMeasure();
+      new RendererCommon.VideoLayoutMeasure();
   private final SurfaceEglRenderer eglRenderer;
 
   // Callback for reporting renderer events. Read-only after initialization so no lock required.
@@ -87,8 +87,8 @@ public class RTCSurfaceView extends android.view.SurfaceView
    * init()/release() cycle.
    */
   public void init(final EglBase.Context sharedContext,
-                   RendererCommon.RendererEvents rendererEvents, final int[] configAttributes,
-                   RendererCommon.GlDrawer drawer) {
+      RendererCommon.RendererEvents rendererEvents, final int[] configAttributes,
+      RendererCommon.GlDrawer drawer) {
     ThreadUtils.checkIsOnMainThread();
     this.rendererEvents = rendererEvents;
     rotatedFrameWidth = 0;
@@ -164,7 +164,7 @@ public class RTCSurfaceView extends android.view.SurfaceView
   }
 
   public void setScalingType(RendererCommon.ScalingType scalingTypeMatchOrientation,
-                             RendererCommon.ScalingType scalingTypeMismatchOrientation) {
+      RendererCommon.ScalingType scalingTypeMismatchOrientation) {
     ThreadUtils.checkIsOnMainThread();
     videoLayoutMeasure.setScalingType(scalingTypeMatchOrientation, scalingTypeMismatchOrientation);
     requestLayout();
@@ -199,7 +199,7 @@ public class RTCSurfaceView extends android.view.SurfaceView
   protected void onMeasure(int widthSpec, int heightSpec) {
     ThreadUtils.checkIsOnMainThread();
     Point size =
-            videoLayoutMeasure.measure(widthSpec, heightSpec, rotatedFrameWidth, rotatedFrameHeight);
+        videoLayoutMeasure.measure(widthSpec, heightSpec, rotatedFrameWidth, rotatedFrameHeight);
     setMeasuredDimension(size.x, size.y);
     logD("onMeasure(). New size: " + size.x + "x" + size.y);
   }
@@ -214,7 +214,7 @@ public class RTCSurfaceView extends android.view.SurfaceView
   private void updateSurfaceSize() {
     ThreadUtils.checkIsOnMainThread();
     if (enableFixedSize && rotatedFrameWidth != 0 && rotatedFrameHeight != 0 && getWidth() != 0
-            && getHeight() != 0) {
+        && getHeight() != 0) {
       final float layoutAspectRatio = getWidth() / (float) getHeight();
       final float frameAspectRatio = rotatedFrameWidth / (float) rotatedFrameHeight;
       final int drawnFrameWidth;
@@ -230,8 +230,8 @@ public class RTCSurfaceView extends android.view.SurfaceView
       final int width = Math.min(getWidth(), drawnFrameWidth);
       final int height = Math.min(getHeight(), drawnFrameHeight);
       logD("updateSurfaceSize. Layout size: " + getWidth() + "x" + getHeight() + ", frame size: "
-              + rotatedFrameWidth + "x" + rotatedFrameHeight + ", requested surface size: " + width
-              + "x" + height + ", old surface size: " + surfaceWidth + "x" + surfaceHeight);
+          + rotatedFrameWidth + "x" + rotatedFrameHeight + ", requested surface size: " + width
+          + "x" + height + ", old surface size: " + surfaceWidth + "x" + surfaceHeight);
       if (width != surfaceWidth || height != surfaceHeight) {
         surfaceWidth = width;
         surfaceHeight = height;
