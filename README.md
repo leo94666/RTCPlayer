@@ -4,7 +4,7 @@
 
 ## 项目特点
 
-- 低延迟
+  - 低延迟
   - [X]支持[ZLMediakit](https://github.com/ZLMediaKit/ZLMediaKit)流媒体
   - [ ]支持[SRS](https://github.com/ossrs/srs)
   - [ ]支持[Janus](https://github.com/meetecho/janus-gateway)
@@ -92,7 +92,7 @@
   设置播放器错误监听回调
 
 ## 联系作者
-
+如果您需要深度二次开发，并支持其他流媒体服务，可以找我哦！
 [李之阳](https://github.com/leo94666)
 
 ## 特别感谢
