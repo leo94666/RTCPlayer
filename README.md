@@ -9,11 +9,11 @@
   - [ ]支持[SRS](https://github.com/ossrs/srs)
   - [ ]支持[Janus](https://github.com/meetecho/janus-gateway)
 
-<center class="half">
+<p align="center">
     <img src="doc/home.jpg" width="240"/>&nbsp;&nbsp;&nbsp;
     <img src="doc/player.jpg" width="240"/>&nbsp;&nbsp;&nbsp;
     <img src="doc/pusher.jpg" width="240"/>
-</center>
+</p>
 
 ## 延迟情况
 
