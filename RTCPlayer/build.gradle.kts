@@ -3,6 +3,7 @@ import com.android.ide.common.repository.main
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    `maven-publish`
 }
 
 android {
@@ -42,8 +43,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
         jvmTarget = "1.8"
@@ -61,24 +62,28 @@ dependencies {
 //    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }
 
-//afterEvaluate {
-//    publishing {
-//        publications {
-//            register<MavenPublication>("release") {
-//                groupId = "com.rtc.core"
-//                artifactId = "RTCPlayer"
-//                version = "1.0.0.beta"
-//                afterEvaluate {
-//                    from(components["release"])
-//                }
-//            }
-//        }
-//        repositories {
-//            mavenLocal()
-//            maven {
-//                name = "RTCPlayer"
-//                url = uri("https://maven.aliyun.com/repository/public/")
-//            }
-//        }
-//    }
-//}
+afterEvaluate {
+    publishing {
+        publications {
+            register<MavenPublication>("release") {
+                groupId = "com.rtc.core"
+                artifactId = "RTCPlayer"
+                version = "1.0.0.beta"
+                afterEvaluate {
+                    from(components["release"])
+                }
+            }
+        }
+        repositories {
+            mavenLocal()
+            maven {
+                name = "RTCPlayer"
+                url = uri("https://packages.aliyun.com/maven/repository/2302596-release-mpvXBR/")
+                credentials {
+                    username = "6256cd6c7e8dbc28d896a661"
+                    password = "KRuEgA3WYUVy"
+                }
+            }
+        }
+    }
+}
