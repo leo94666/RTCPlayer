@@ -53,5 +53,6 @@ dependencies {
     implementation("com.guolindev.permissionx:permissionx:1.7.1")
 
     implementation(project(":RTCPlayer"))
+    //implementation("com.gitee.likefire:rtcplayer:1.0.0")
 
 }

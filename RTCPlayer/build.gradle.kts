@@ -3,7 +3,6 @@ import com.android.ide.common.repository.main
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    `maven-publish`
 }
 
 android {
@@ -69,7 +68,6 @@ dependencies {
 //                groupId = "com.rtc.core"
 //                artifactId = "RTCPlayer"
 //                version = "1.0.0.beta"
-//
 //                afterEvaluate {
 //                    from(components["release"])
 //                }
@@ -79,11 +77,7 @@ dependencies {
 //            mavenLocal()
 //            maven {
 //                name = "RTCPlayer"
-//                url = uri("https://packages.aliyun.com/maven/repository/2302596-release-mpvXBR/")
-//                credentials {
-//                    username = "6256cd6c7e8dbc28d896a661"
-//                    password = "KRuEgA3WYUVy"
-//                }
+//                url = uri("https://maven.aliyun.com/repository/public/")
 //            }
 //        }
 //    }
