@@ -4,10 +4,10 @@
 
 ## 项目特点
 
-  - 低延迟
-  - [X]支持[ZLMediakit](https://github.com/ZLMediaKit/ZLMediaKit)流媒体
-  - [ ]支持[SRS](https://github.com/ossrs/srs)
-  - [ ]支持[Janus](https://github.com/meetecho/janus-gateway)
+  - :white_check_mark:低延迟(200~500ms)
+  - :white_check_mark:支持[ZLMediakit](https://github.com/ZLMediaKit/ZLMediaKit)流媒体
+  - :black_square_button:支持[SRS](https://github.com/ossrs/srs)
+  - :black_square_button:支持[Janus](https://github.com/meetecho/janus-gateway)
 
 <p align="center">
     <img src="doc/home.jpg" width="240"/>&nbsp;&nbsp;&nbsp;
@@ -19,21 +19,21 @@
 
 - **网页端推流，Android端播放**
 
-<center class="half">
+<p align="center">
     <img src="doc/delay_play1.jpg" width="240"/>&nbsp;&nbsp;&nbsp;
     <img src="doc/delay_play2.jpg" width="240"/>&nbsp;&nbsp;&nbsp;
     <img src="doc/delay_play3.jpg" width="240"/>
-</center>
+</p>
 
 三次延迟分别为：490ms、526ms、560ms
 
 - **Android端推屏幕流，网页端播放**
 
-<center class="half">
+<p align="center">
     <img src="doc/delay_push1.jpg" width="240"/>&nbsp;&nbsp;&nbsp;
     <img src="doc/delay_push2.jpg" width="240"/>&nbsp;&nbsp;&nbsp;
     <img src="doc/delay_push3.jpg" width="240"/>
-</center>
+</p>
 
 三次延迟分别为：440ms、430ms、387ms
 
