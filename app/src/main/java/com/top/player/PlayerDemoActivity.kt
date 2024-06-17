@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.rtc.core.ZLMRTCPlayer
+import com.rtc.core.play.SRSRTCPlayerImpl
 import com.rtc.core.play.Status
 import com.rtc.core.play.ZLMRTCPlayerImpl
 import com.top.player.databinding.ActivityPlayerBinding
@@ -15,6 +16,7 @@ class PlayerDemoActivity : AppCompatActivity() {
 
     private val player: ZLMRTCPlayer by lazy {
         ZLMRTCPlayerImpl(this)
+        SRSRTCPlayerImpl(this)
     }
 
 
@@ -29,7 +31,7 @@ class PlayerDemoActivity : AppCompatActivity() {
 
         //ffmpeg -re -stream_loop -1 -i "D:\li\hot\data\data\baseline.mp4" -vcodec h264 -acodec aac -f rtsp -rtsp_transport tcp -bf 0 rtsp://zlmediakit.com/live/li
         //ffmpeg -re -stream_loop -1 -i "D:\li\hot\data\data\test.mp4" -vcodec h264 -acodec aac -f flv -bf 0 rtmp://zlmediakit.com/live/li
-
+        //ffmpeg -re -stream_loop -1 -i "D:\li\hot\data\data\test.mp4" -vcodec h264 -acodec aac -f flv -bf 0 rtmp://111.229.192.2:1935/live/li
         setTitle("Player Demo")
         player.bind(binding.surfaceViewRender)
 

@@ -10,6 +10,7 @@ import com.permissionx.guolindev.PermissionX
 import com.rtc.core.RTCSurfaceView
 import com.rtc.core.ZLMRTCPusher
 import com.rtc.core.push.PushMode
+import com.rtc.core.push.SRSRTCPusherImpl
 import com.rtc.core.push.ZLMRTCPusherImpl
 import com.top.player.databinding.ActivityPlayerBinding
 import com.top.player.databinding.ActivityPusherBinding
@@ -18,8 +19,9 @@ import com.top.player.databinding.ActivityPusherBinding
 class PusherDemoActivity : AppCompatActivity() {
 
 
-    private val pusher: ZLMRTCPusher by lazy {
+    private val pusher by lazy {
         ZLMRTCPusherImpl(this)
+        SRSRTCPusherImpl(this)
     }
 
 

@@ -52,7 +52,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22")
     implementation("com.guolindev.permissionx:permissionx:1.7.1")
 
-    //implementation(project(":RTCPlayer"))
-    implementation("com.rtc.core:RTCPlayer:1.0.0.beta")
+    implementation(project(":RTCPlayer"))
+    //implementation("com.rtc.core:RTCPlayer:1.0.0.beta")
 
 }

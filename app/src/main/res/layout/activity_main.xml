@@ -19,4 +19,10 @@
 
 
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="toIntercomActivity"
+        android:text="1v1对讲" />
+
 </androidx.appcompat.widget.LinearLayoutCompat>

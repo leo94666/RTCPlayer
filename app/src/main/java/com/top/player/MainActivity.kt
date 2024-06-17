@@ -22,4 +22,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    fun toIntercomActivity(view: View) {
+        startActivity(Intent(this, IntercomActivity::class.java))
+
+    }
+
 }
