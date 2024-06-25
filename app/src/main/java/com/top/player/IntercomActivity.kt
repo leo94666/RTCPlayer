@@ -21,9 +21,6 @@ class IntercomActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
         setTitle("Intercom Demo")
-
     }
-
 }
