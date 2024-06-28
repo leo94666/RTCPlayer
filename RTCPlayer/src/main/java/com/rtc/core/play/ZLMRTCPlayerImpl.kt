@@ -65,7 +65,7 @@ class ZLMRTCPlayerImpl(val context: Context) : ZLMRTCPlayer(),
     }
 
     private fun logger(msg: String) {
-        Log.i("ZLMRTCPlayerImpl", msg)
+       // Log.i("ZLMRTCPlayerImpl", msg)
     }
 
     private fun createVideoCapture(context: Context?): VideoCapturer? {

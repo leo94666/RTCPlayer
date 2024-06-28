@@ -10,7 +10,7 @@ class App: Application() {
         super.onCreate()
 
         //RTCCore.init("https://zlmediakit.com/")
-        RTCCore.init("http://111.229.192.2:1985/", platform = Platform.SRS)
+        RTCCore.init("http://111.229.192.2:1985")
 
         //http://111.229.192.2:1985/rtc/v1/whep/?app=live&stream=li
     }

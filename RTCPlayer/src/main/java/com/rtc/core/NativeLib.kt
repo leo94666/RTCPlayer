@@ -4,14 +4,15 @@ import com.rtc.core.base.Platform
 
 class NativeLib {
 
-    fun init(baseUrl: String, platform: Platform) {
-
-    }
+//    fun init(baseUrl: String, platform: Platform) {
+//        init(baseUrl)
+//    }
 
     fun makePushUrl(app: String, streamId: String, srs: Platform): String {
         return makePushUrl(app, streamId, Platform.ZLMediaKit)
     }
 
+    external fun init(baseUrl:String)
 
 
     external fun makePlayUrl(app:String,streamId:String): String
