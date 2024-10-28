@@ -22,4 +22,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "RTCPlayer"
 include(":app")
-include(":RTCPlayer")

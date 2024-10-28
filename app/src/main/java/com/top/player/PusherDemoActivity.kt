@@ -21,7 +21,7 @@ class PusherDemoActivity : AppCompatActivity() {
 
     private val pusher by lazy {
         ZLMRTCPusherImpl(this)
-        SRSRTCPusherImpl(this)
+        //SRSRTCPusherImpl(this)
     }
 
 

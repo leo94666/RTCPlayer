@@ -16,7 +16,7 @@ class PlayerDemoActivity : AppCompatActivity() {
 
     private val player: ZLMRTCPlayer by lazy {
         ZLMRTCPlayerImpl(this)
-        SRSRTCPlayerImpl(this)
+        //SRSRTCPlayerImpl(this)
     }
 
 

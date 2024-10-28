@@ -53,6 +53,6 @@ dependencies {
     implementation("com.guolindev.permissionx:permissionx:1.7.1")
 
     //implementation(project(":RTCPlayer"))
-    implementation("com.rtc.core:RTCPlayer:1.0.1.beta")
+    implementation("com.rtc.core:RTCPlayer:1.0.2.beta")
 
 }
